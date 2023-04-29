@@ -1,0 +1,46 @@
+﻿@page "/"
+@page "/{categoryUrl}"
+@using Final_Exam_Project.Client.Services.CategoryService;
+@using Final_Exam_Project.Shared;
+@inject ICategoryServiceClient CategoryService;
+
+<PageTitle>@Title</PageTitle>
+
+@if (categoryUrl != null)
+{
+    <ProductList CategoryId="@category.Id"></ProductList>
+}
+else
+{
+    <ProductList />
+}
+
+@code
+{
+    [Parameter]
+    public string categoryUrl { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    private Category category = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (categoryUrl != null)
+        {
+
+            var categories = await CategoryService.GetCategories();
+            category = categories.FirstOrDefault(c => c.Url.Equals(categoryUrl));
+            Title = category.Name;
+
+        }
+        else
+        {
+            category = null;
+            Title = "Index";
+        }
+    }
+
+
+}

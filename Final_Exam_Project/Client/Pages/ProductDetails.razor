@@ -1,0 +1,48 @@
+﻿@page "/product/{id}"
+@using Final_Exam_Project.Client.Services.ProductService;
+@using Final_Exam_Project.Shared;
+@inject IProductServiceClient ProductService;
+
+<!-- Media object -->
+<div class="d-flex ">
+    <!-- Image -->
+    <div class="media-img-big-wrapper me-lg-5">
+        <img src="@product.Image"
+             alt="John Doe"
+             class="media-img-big mr-2" />
+    </div>
+    <!-- Body -->
+    <div class="m-lg-2">
+        <h2 class="mb-6 fw-bolder">@product.Title</h2>
+        <p class="text-wrap">
+            @product.Description
+        </p>
+        <div class="d-flex">
+            <h6 class=" text-decoration-line-through price">$@product.OriginalPrice</h6>
+
+            <h5 class="text-danger ms-lg-2">@String.Format("{0:0.00}",DiscountPercent())%</h5>
+        </div>
+
+        <h4 class="price">$@product.Price</h4>
+        <button class="btn btn-primary"><i class="oi oi-cart"></i>&nbsp;&nbsp;&nbsp; Add to Cart</button>
+    </div>
+</div>
+<!-- Media object -->
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    private Product product = null;
+
+    protected override async Task OnInitializedAsync() => product = await ProductService.GetProductById(Int32.Parse(Id));
+
+    public decimal DiscountPercent()
+    {
+        if (product.Price <= 0 || product.OriginalPrice <= 0)
+        {
+            return 0;
+        }
+        return ((product.Price / product.OriginalPrice) * 100) - 100;
+
+
+    }
+}
