@@ -1,6 +1,8 @@
+using Final_Exam_Project.Server.Data;
 using Final_Exam_Project.Server.Services.CategoryService;
 using Final_Exam_Project.Server.Services.ProductService;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnectionString")));
 
 var app = builder.Build();
 

@@ -11,6 +11,9 @@ namespace Final_Exam_Project.Client.Services.ProductService
         {
             _http = http;
         }
+
+
+
         public async Task<Product> GetProductById(int id)
         {
             var product = await _http.GetFromJsonAsync<Product>($"api/product/{id}");
@@ -20,7 +23,7 @@ namespace Final_Exam_Project.Client.Services.ProductService
         public async Task<List<Product>> GetProducts()
         {
             var products = await _http.GetFromJsonAsync<List<Product>>("api/product");
-            Console.WriteLine(products);
+
             return products;
         }
 

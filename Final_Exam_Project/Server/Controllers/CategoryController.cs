@@ -21,5 +21,11 @@ namespace Final_Exam_Project.Server.Controllers
         {
             return Ok(await categoryService.LoadCategory());
         }
+
+        [HttpGet("{url}")]
+        public async Task<ActionResult<Category>> GetCategoryByUrl(string url)
+        {
+            return Ok(await categoryService.GetCategoryByUrl(url));
+        }
     }
 }

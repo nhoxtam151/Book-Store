@@ -30,9 +30,9 @@ else
         if (categoryUrl != null)
         {
 
-            var categories = await CategoryService.GetCategories();
-            category = categories.FirstOrDefault(c => c.Url.Equals(categoryUrl));
+            category = await CategoryService.GetCategoryByUrl(categoryUrl);
             Title = category.Name;
+
 
         }
         else
@@ -41,6 +41,10 @@ else
             Title = "Index";
         }
     }
+
+
+
+
 
 
 }

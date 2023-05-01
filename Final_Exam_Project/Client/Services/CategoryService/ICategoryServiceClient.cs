@@ -4,7 +4,9 @@ namespace Final_Exam_Project.Client.Services.CategoryService
 {
     public interface ICategoryServiceClient
     {
+
         public Task<List<Category>> GetCategories();
 
+        public Task<Category> GetCategoryByUrl(string url);
     }
 }

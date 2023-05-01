@@ -4,7 +4,7 @@
 @inject IProductServiceClient ProductService;
 
 <!-- Media object -->
-<div class="d-flex ">
+<div class="d-flex col-6 align-items-center ms-md-5">
     <!-- Image -->
     <div class="media-img-big-wrapper me-lg-5">
         <img src="@product.Image"
@@ -17,32 +17,65 @@
         <p class="text-wrap">
             @product.Description
         </p>
-        <div class="d-flex">
-            <h6 class=" text-decoration-line-through price">$@product.OriginalPrice</h6>
+        @if (product.Variants != null && product.Variants.Count > 0)
+        {
+            <div class="form-group mb-4">
+                <select class="form-control" @bind="currentColorId">
+                    @foreach (var variant in product.Variants)
+                    {
+                        <option value="@variant.ColorId">@variant.Color.Name</option>
+                    }
+                </select>
+            </div>
+        }
 
-            <h5 class="text-danger ms-lg-2">@String.Format("{0:0.00}",DiscountPercent())%</h5>
-        </div>
+        @if (GetSelectedVariant() != null)
+        {
+            <div class="d-flex">
+                <h6 class=" text-decoration-line-through price">$@GetSelectedVariant().OriginalPrice</h6>
 
-        <h4 class="price">$@product.Price</h4>
-        <button class="btn btn-primary"><i class="oi oi-cart"></i>&nbsp;&nbsp;&nbsp; Add to Cart</button>
+                <h5 class="text-danger ms-lg-2">@String.Format("{0:0.00}",DiscountPercent())%</h5>
+            </div>
+
+            <h4 class="price">$@GetSelectedVariant().Price</h4>
+            <button class="btn btn-primary"><i class="oi oi-cart"></i>&nbsp;&nbsp;&nbsp; Add to Cart</button>
+ 
+        }
     </div>
 </div>
 <!-- Media object -->
-@code {
-    [Parameter]
-    public string Id { get; set; }
-    private Product product = null;
+    @code {
+        [Parameter]
+        public string Id { get; set; }
+        private Product product = null;
+        private int currentColorId = 1;
+        
 
-    protected override async Task OnInitializedAsync() => product = await ProductService.GetProductById(Int32.Parse(Id));
-
-    public decimal DiscountPercent()
-    {
-        if (product.Price <= 0 || product.OriginalPrice <= 0)
+        protected override async Task OnInitializedAsync()
         {
-            return 0;
+            product = await ProductService.GetProductById(Int32.Parse(Id));
+
+            if (product.Variants.Count > 0)
+            {
+                currentColorId = product.Variants[0].ColorId;
+            }
         }
-        return ((product.Price / product.OriginalPrice) * 100) - 100;
 
 
-    }
+        private ProductVariant GetSelectedVariant()
+        {
+            var variant = product.Variants.FirstOrDefault(v => v.ColorId == currentColorId);
+            return variant;
+        }
+
+        public decimal DiscountPercent()
+        {
+        if (GetSelectedVariant().Price <= 0 || GetSelectedVariant().OriginalPrice <= 0)
+            {
+                return 0;
+            }
+        return ((GetSelectedVariant().Price / GetSelectedVariant().OriginalPrice) * 100) - 100;
+
+
+        }
 }
